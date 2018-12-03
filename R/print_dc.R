@@ -65,6 +65,17 @@ print_dc <- function(dc, display, file_name = NULL, to_Rmd = FALSE){
          ".\nComparisons below are made to ", dc$reference_design, ".", 
          lead_breaks = 0, sep="")
       
+      if(mean(design_comparison$summary_available) != 1){
+        md("Errors", N_hashtags = 2)
+        md("The following errors were caught while making summaries:", 
+           trail_breaks = 2)
+        for(i in which(!(design_comparison$summary_available))){
+          md(design_comparison$design_names[i], 
+             "generated the following error:", lead_breaks = 0, trail_breaks = 0)
+          md(design_comparison$summaries[[i]], lead_breaks = 0, trail_breaks = 0)
+        }
+      }
+      
     } 
     
     if(display == "all") {
@@ -95,8 +106,8 @@ print_dc <- function(dc, display, file_name = NULL, to_Rmd = FALSE){
         if(to_Rmd) cat("```\n")
       }
       
-      md("Summaries", N_hashtags = 2)
-      # insert here and highlights version
+      # md("Summaries", N_hashtags = 2)
+      # could insert here and highlights version
       
     }else{
       if(display == "highlights"){
