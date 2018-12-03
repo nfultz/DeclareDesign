@@ -72,6 +72,19 @@ print_dc <- function(dc, display, file_name = NULL, to_Rmd = FALSE){
       md("Tests for Equality", N_hashtags = 2)
       print_md(dc$equality_comparisons, to_Rmd = to_Rmd)
       
+      
+      md("Number of Characters", N_hashtags = 2)
+      
+      if(sum(unlist(lapply(dc$overview_nchar, difference)))){
+        md("Number of characters for each design (by step in the code):", N_hashtags = 3)
+        print_md(dc$overview_nchar, to_Rmd = to_Rmd)
+      }else{
+        if(display == "all"){
+          md("Each design has same number of characters (by step in the code):", N_hashtags = 3)
+          print_md(dc$overview_nchar[1,], to_Rmd = to_Rmd)
+        }
+      }
+      
       md("Code Overview", N_hashtags = 2)
       
       for(i in 1:ncol(dc$overview)){
@@ -81,6 +94,9 @@ print_dc <- function(dc, display, file_name = NULL, to_Rmd = FALSE){
            lead_breaks = 0)
         if(to_Rmd) cat("```\n")
       }
+      
+      md("Summaries", N_hashtags = 2)
+      # insert here and highlights version
       
     }else{
       if(display == "highlights"){
@@ -120,7 +136,7 @@ md <- function(a, b = NULL, c = NULL, d = NULL, e = NULL, f = NULL, g = NULL,
       rep("\n", trail_breaks), ...)
 }
 
-print_md <- function(..., to_Rmd=FALSE){
+print_md <- function(..., to_Rmd = FALSE){
   
   if(to_Rmd) cat("```r\n")
   print(...)

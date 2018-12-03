@@ -62,6 +62,8 @@ compare_designs <- function(..., display = c("highlights", "all", "none"),
   design_names <- as.character(as.list(substitute(list(...)))[-1L])
   reference_design <- design_names[1]
   N_designs <- length(designs)
+  if(N_designs < 2)
+    stop("compare_design() requires at least two designs. For single objects, use summary().")
   
   steps_per_design <- lapply(designs, length)
   names(steps_per_design) <- design_names
@@ -72,18 +74,6 @@ compare_designs <- function(..., display = c("highlights", "all", "none"),
   names(overview_nchar) <- design_names
   if(length(unique(lapply(designs, length))) == 1){
     overview_nchar <- do.call(rbind, overview_nchar)
-  }
-  
-  if(display != "none"){
-    if(sum(unlist(lapply(overview_nchar, difference)))){
-      cat("Number of characters for each design (by step in the code):\n\n")
-      print(overview_nchar)
-    }else{
-      if(display == "all"){
-        cat("Each design has same number of characters (by step in the code):\n\n")
-        print(overview_nchar[1,])
-      }
-    }
   }
 
   overview <- data.frame(assignment = vector("character", N_designs), 
@@ -143,18 +133,35 @@ compare_designs <- function(..., display = c("highlights", "all", "none"),
   
   identical_steps <- unique(similarity) == 1 
   
-  identical_attr_to_design1 <- unlist(lapply(designs, identical_attributes, designs[[1]]))
+  identical_attr_to_design1 <- identicals(designs, attributes)
+  #identical_attr_to_design1 <- unlist(lapply(designs, identical_attributes, designs[[1]]))
   
-  similarity <- 0.05*identical_attr_to_design1 + .05*equality_comparisons + 0.9*similarity
+  summaries <- summary_available <- c()
+  for(d in 1:N_designs){
+    tmp <- try(s <- summary(designs[[d]]), silent = TRUE)
+    summary_available[d] <- if(inherits(tmp, "try-error")) FALSE else TRUE
+    summaries[[design_names[d]]] <- tmp 
+  }
+  names(summary_available) <- design_names
+  if(sum(summary_available) != N_designs)
+    warning("At least one design summary is not available, suggesting that one or more may be improperly specified.")
+  
+  identical_summary_to_design1 <- identicals(summaries)
+  
+  spot_checks <- c(identical_summary_to_design1, identical_attr_to_design1, 
+                   equality_comparisons)
+  N_spot_checks <- length(spot_checks)
+  similarity <- 0.05*sum(spot_checks) + (1 - 0.05*N_spot_checks)*similarity
   
   highlights <- overview[similarity != 1]
   
   if(sort_comparisons)
     overview <- overview[rank(rowMeans(similarity), ties.method = "first"), ]
   
-  if(sum(identical_attr_to_design1)){
-    
-    reference_code <- attributes(designs[[1]])[["code"]]
+  reference_code <- attributes(designs[[1]])[["code"]]
+  
+  if(sum(!identical_attr_to_design1) & !is.null(reference_code)){
+
     code_differences <- list()
     
     for(d in which(!identical_attr_to_design1)){
@@ -164,6 +171,8 @@ compare_designs <- function(..., display = c("highlights", "all", "none"),
       elements <- match(code_diffs, attributes(designs[[d]])[["code"]])
       
       tmp <- rbind(reference_code[elements], code_diffs)
+      
+      browser()
       colnames(tmp) <- c(design_names[1], design_names[d])
       code_differences[[design_names[d]]] <- tmp
       
@@ -180,12 +189,15 @@ compare_designs <- function(..., display = c("highlights", "all", "none"),
               equality_comparisons = equality_comparisons, 
               N_designs = N_designs, steps_per_design = steps_per_design,
               identical_steps = identical_steps, 
-              code_differences = code_differences
+#              code_differences = code_differences,
+              overview_nchar = overview_nchar, 
+              summaries = summaries,
+              summary_available = summary_available
               )
   
   if(exists("code_differences"))
     out[["code_differences"]] <- code_differences
-
+  
   class(out) <- "design_comparison"
   if(display != "none")
     print(out, display = display, Rmd_file_prefix = Rmd_file_prefix)
@@ -198,8 +210,6 @@ compare_designs <- function(..., display = c("highlights", "all", "none"),
 clean_call <- function(call) paste(sapply(deparse(call), trimws), collapse = " ")
 # ex. if declare_population is used by at least 1 design, retained in overview
 feature_used <- function(feature) as.logical(sum(nchar(feature)))
-
-identical_attributes <- function(a, b) identical(attributes(a), attributes(b))
 
 difference <- function(x) length(unique(x)) > 1
 
@@ -220,4 +230,28 @@ jaccard <- function(feature_tokens){ # https://rbshaffer.github.io/_includes/eva
   }
   return(sim)
 }
+
+identicals <- function(..., f = identity){ 
+# compares each item of list to first item; two input patterns:
+# identicals(letters, LETTERS, LETTERS, letters)
+# x <- list(letters, LETTERS)
+# identicals(x, f = to_upper) # TRUE TRUE
+  objs <- list(...)
+#  browser()
+  if(length(objs) == 1 || class(objs[[2]]) == "function")
+    objs <- objs[[1]]
+  stopifnot(length(objs) > 2)
+  stopifnot(is.list(objs))
+  
+  identical_to_first <- c(TRUE)
+  
+  for(i in 2:length(objs))
+    identical_to_first[i] <- identical(f(objs[[1]]), f(objs[[i]]))
+  
+  return(identical_to_first)
+  
+}
+
+# deprecated
+# identical_attributes <- function(a, b) identical(attributes(a), attributes(b))
 
