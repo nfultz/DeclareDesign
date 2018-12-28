@@ -144,7 +144,7 @@ compare_designs <- function(..., display = c("highlights", "all", "none"),
   }
   names(summary_available) <- design_names
   if(sum(summary_available) != N_designs)
-    warning("At least one design summary is not available, suggesting that one or more may be improperly specified.")
+    warning("At least one design summary is not available, suggesting that one or more may be improperly specified. See output for details.")
   
   identical_summary_to_design1 <- identicals(summaries)
   
@@ -249,6 +249,15 @@ identicals <- function(..., f = identity){
     identical_to_first[i] <- identical(f(objs[[1]]), f(objs[[i]]))
   
   return(identical_to_first)
+  
+}
+
+x_identicals(...){
+  objs <- list(...)
+  if(unique(objs) != "list" || length(unique(objs)) > 1)
+    warning("x_identicals() intended to compare nested lists. See also identicals().")
+  
+  unnested <- list()
   
 }
 
