@@ -43,9 +43,11 @@ d3 <- declare_population(N = 200) +
  declare_estimator(glm(Y ~ Z, family = poisson))
 
 compare_designs(d1, d2, d3)
-compare_designs(d1, d2, d3, , display = "all")
-my_comparison <- compare_designs(d1, d2, d3)
+compare_designs(d1, d2, d3, display = "all")
 my_comparison <- compare_designs(d1, d2, d3, Rmd_file_prefix = "my_report")
+# above creates Rmd file but does not print to console
+# (but comparisons can be stored and printed later...)...
+my_comparison
 
 # Do not change what helper functions do mid-comparison.
 # For example, don't:
