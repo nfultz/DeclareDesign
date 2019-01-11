@@ -4,6 +4,7 @@
 #' @param display c("highlights", "all", "none"), where highlights is the default.
 #' @param Rmd_file_prefix Optional. If provided, creates Rmd template based on display type. E.g., "my_comparison". 
 #' @method print design_comparison
+#' @importFrom knitr kable
 #' @export
 print.design_comparison <- function(design_comparison, 
                                     display = c("highlights", "all", "none"),
@@ -72,7 +73,7 @@ print_dc <- function(dc, display, file_name = NULL, to_Rmd = FALSE){
          ".\nComparisons below are made to ", dc$reference_design, ".", 
          lead_breaks = 0, sep="")
       
-      if(mean(design_comparison$summary_available) != 1){
+      if(mean(dc$summary_available) != 1){
         md("Errors", N_hashtags = 2)
         md("The following errors were caught while making summaries:", 
            trail_breaks = 2)
@@ -146,11 +147,12 @@ print_dc <- function(dc, display, file_name = NULL, to_Rmd = FALSE){
         # Data structure
         md("Differences in Data structure", N_hashtags = 2)
         
-        if(sum(matrix_difference(dc$data_shape))){ 
-          print_md(kable(dc$data_shape), to_Rmd = to_Rmd)
-        } else { print("Designs have same dimension")}
-        
-        
+        if(!is.null(dc$data_shape)){
+          if(sum(matrix_difference(dc$data_shape))){ 
+            print_md(kable(dc$data_shape), to_Rmd = to_Rmd)
+          } else { print("Designs have same dimension")}
+        }
+  
         # Step Type Equality
         md("Tests for Equality Across Step Types", N_hashtags = 2)
         print_md(dc$equality_comparisons, to_Rmd = to_Rmd)

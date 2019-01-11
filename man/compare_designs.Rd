@@ -30,6 +30,7 @@ declare_assignment(m = 50) +
 declare_potential_outcomes(Y ~ rbinom(n = N, size = 1, prob = 0.5 + .1*Z)) +
 declare_estimand(ATE = 0.3) +
 declare_estimator(Y ~ Z)
+
 d2 <- declare_population(N = 100) +
  declare_assignment(m = 50) +
  declare_potential_outcomes(Y ~ rpois(n = N, lambda = 0.5 + .1*Z)) +

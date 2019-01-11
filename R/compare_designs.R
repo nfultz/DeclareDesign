@@ -15,6 +15,7 @@
 #' declare_potential_outcomes(Y ~ rbinom(n = N, size = 1, prob = 0.5 + .1*Z)) +
 #' declare_estimand(ATE = 0.3) +
 #' declare_estimator(Y ~ Z)
+#' 
 #'d2 <- declare_population(N = 100) +
 #'  declare_assignment(m = 50) +
 #'  declare_potential_outcomes(Y ~ rpois(n = N, lambda = 0.5 + .1*Z)) +
@@ -309,16 +310,19 @@ identicals <- function(..., f = identity){
 }
 
 x_identicals <- function(...){
+  
   objs <- list(...)
   if(unique(objs) != "list" || length(unique(objs)) > 1)
     warning("x_identicals() intended to compare nested lists. See also identicals().")
   
   unnested <- list()
   
+  # FIX ME 
+  
 }
 
 # deprecated
-# identical_attributes <- function(a, b) identical(attributes(a), attributes(b))
+identical_attributes <- function(a, b) identical(attributes(a), attributes(b))
 
  # Code comparison
 get_d_code <- function(d) {
