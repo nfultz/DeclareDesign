@@ -144,10 +144,10 @@ print_dc <- function(dc, display, file_name = NULL, to_Rmd = FALSE){
       if(display == "highlights"){
         md("Detail", N_hashtags = 1)      
 
-        # Data structure
-        md("Differences in Data structure", N_hashtags = 2)
-        
         if(!is.null(dc$data_shape)){
+          # Data structure
+          md("Differences in Data structure", N_hashtags = 2)
+          
           if(sum(matrix_difference(dc$data_shape))){ 
             print_md(kable(dc$data_shape), to_Rmd = to_Rmd)
           } else { print("Designs have same dimension")}
