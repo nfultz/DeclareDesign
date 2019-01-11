@@ -53,6 +53,20 @@
 #'# Highlights
 #'# Differences detected between steps:
 #'# [1] "declare_population(N = 2, X = 1:2, Y = g2(X))"
+#'
+#'
+#'# example below with redesign() where
+#'# the key difference ultimately manifests in data_shape 
+#'
+#'n <- 500
+#'population <- declare_population(N = 1000)
+#'sampling <- declare_sampling(n = n)
+#'design <- population + sampling
+#'modified_design <- redesign(design, n = 200)
+#'comp <- compare_designs(design, modified_design)
+#'comp$data_shape
+#'
+#'
 #'@export   
 compare_designs <- function(..., display = c("highlights", "all", "none"),
                             sort_comparisons = TRUE, Rmd_file_prefix = NULL){
