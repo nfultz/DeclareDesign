@@ -65,6 +65,7 @@ compare_designs <- function(..., display = c("highlights", "all", "none"),
   design_names <- as.character(as.list(substitute(list(...)))[-1L])
   reference_design <- design_names[1]
   N_designs <- length(designs)
+  
   if(N_designs < 2)
     stop("compare_design() requires at least two designs. For single objects, use summary().")
   
@@ -73,7 +74,7 @@ compare_designs <- function(..., display = c("highlights", "all", "none"),
   rownames(data_shape) <- design_names
   colnames(data_shape) <- c("rows", "cols")
   attr(data_shape, "description") <- "Dimensionality of drawn data"
-  attr(data_shape, "differences")  <- sum(matrix_difference(t(data_shape)))>0
+  attr(data_shape, "differences")  <- sum(matrix_difference(t(data_shape))) > 0
   attr(data_shape, "highlight")   <- TRUE
   
   # Steps per design
@@ -190,10 +191,10 @@ compare_designs <- function(..., display = c("highlights", "all", "none"),
   
   reference_code <- attributes(designs[[1]])[["code"]]
   
+  code_differences <- list()
+  
   if(sum(!identical_attr_to_design1) & !is.null(reference_code)){
 
-    code_differences <- list()
-    
     for(d in which(!identical_attr_to_design1)){
       
       code_diffs <- setdiff(attributes(designs[[d]])[["code"]], 
@@ -225,6 +226,7 @@ compare_designs <- function(..., display = c("highlights", "all", "none"),
   # Bringing it all together
   
   out <- list(design_names = design_names,
+              data_shape = data_shape,
               character_comparisons = overview_nchar,
               overview = overview, 
               reference_design = reference_design, 
@@ -233,7 +235,7 @@ compare_designs <- function(..., display = c("highlights", "all", "none"),
               equality_comparisons = equality_comparisons, 
               N_designs = N_designs, steps_per_design = steps_per_design,
               identical_steps = identical_steps, 
-#              code_differences = code_differences,
+              code_differences = code_differences,
               overview_nchar = overview_nchar, 
               summaries = summaries,
               summary_available = summary_available
@@ -297,7 +299,7 @@ identicals <- function(..., f = identity){
 #  browser()
   if(length(objs) == 1 || class(objs[[2]]) == "function")
     objs <- objs[[1]]
-  stopifnot(length(objs) > 2)
+  stopifnot(length(objs) > 1)
   stopifnot(is.list(objs))
   
   identical_to_first <- c(TRUE)

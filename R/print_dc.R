@@ -128,7 +128,11 @@ print_dc <- function(dc, display, file_name = NULL, to_Rmd = FALSE){
       
       md("Steps with differences in code", N_hashtags = 2)
       md("Summary of steps that exhibit some code differences across designs:")
-      if(sum(matrix_difference(dc$code_differences))){ 
+      
+      cd <- dc$code_differences
+      diffs <- if(is.matrix(cd)) sum(matrix_difference(cd)) > 0 else length(cd) > 0
+
+      if(diffs){ 
         print_md(rownames(dc$code_differences), to_Rmd = to_Rmd)
         md("Specifically:")
         print_md(kable(dc$code_differences), to_Rmd = to_Rmd)
