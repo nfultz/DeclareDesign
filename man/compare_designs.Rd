@@ -5,8 +5,8 @@
 \title{compare_designs}
 \usage{
 compare_designs(..., display = c("highlights", "all", "none"),
-  sort_comparisons = TRUE, output_type = c("html", "pdf", "docx",
-  "Rmd", "none"), file_prefix = NULL)
+  sort_comparisons = TRUE, output_type = c("html", "pdf", "word",
+  "github", "Rmd", "none"), file_prefix = NULL)
 }
 \arguments{
 \item{...}{A design or set of designs typically created using the + operator, or a \code{data.frame} of simulations, typically created by \code{\link{simulate_design}}.}
@@ -15,7 +15,7 @@ compare_designs(..., display = c("highlights", "all", "none"),
 
 \item{sort_comparisons}{Logical: order rows by Jaccard similarity to the first design?}
 
-\item{output_type}{c("html", "pdf", "docx", "Rmd", "none"). Creates a file called 'design_comparison.html' unless file_prefix is provided (or a different file type is specified).}
+\item{output_type}{c("html", "pdf", "word", "github", "Rmd", "none"). Creates a file called 'design_comparison.html' unless file_prefix is provided (or a different file type is specified).}
 
 \item{file_prefix}{Optional. If provided, names the file specified by \code{output_type}.}
 }
