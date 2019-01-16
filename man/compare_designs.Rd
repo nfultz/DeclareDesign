@@ -5,7 +5,8 @@
 \title{compare_designs}
 \usage{
 compare_designs(..., display = c("highlights", "all", "none"),
-  sort_comparisons = TRUE, Rmd_file_prefix = NULL)
+  sort_comparisons = TRUE, output_type = c("html", "pdf", "docx",
+  "Rmd", "none"), file_prefix = NULL)
 }
 \arguments{
 \item{...}{A design or set of designs typically created using the + operator, or a \code{data.frame} of simulations, typically created by \code{\link{simulate_design}}.}
@@ -14,7 +15,9 @@ compare_designs(..., display = c("highlights", "all", "none"),
 
 \item{sort_comparisons}{Logical: order rows by Jaccard similarity to the first design?}
 
-\item{Rmd_file_prefix}{Optional. If provided, creates Rmd template based on display type. E.g., "my_comparison".}
+\item{output_type}{c("html", "pdf", "docx", "Rmd", "none"). Creates a file called 'design_comparison.html' unless file_prefix is provided (or a different file type is specified).}
+
+\item{file_prefix}{Optional. If provided, names the file specified by \code{output_type}.}
 }
 \value{
 Invisibly returns list containing requested data frames (overview and/or highlights).
@@ -45,8 +48,8 @@ d3 <- declare_population(N = 200) +
 
 compare_designs(d1, d2, d3)
 compare_designs(d1, d2, d3, display = "all")
-my_comparison <- compare_designs(d1, d2, d3, Rmd_file_prefix = "my_report")
-# above creates Rmd file but does not print to console
+my_comparison <- compare_designs(d1, d2, d3, file_prefix = "my_report")
+# above creates html file but does not print to console
 # (but comparisons can be stored and printed later...)...
 my_comparison
 

@@ -7,7 +7,8 @@
 #' @param ... A design or set of designs typically created using the + operator, or a \code{data.frame} of simulations, typically created by \code{\link{simulate_design}}. 
 #' @param display c("highlights", "all", "none"), where highlights is the default. 
 #' @param sort_comparisons Logical: order rows by Jaccard similarity to the first design?
-#' @param Rmd_file_prefix Optional. If provided, creates Rmd template based on display type. E.g., "my_comparison".
+#' @param output_type c("html", "pdf", "word", "Rmd", "none"). Creates a file called 'design_comparison.html' unless file_prefix is provided (or a different file type is specified).
+#' @param file_prefix Optional. If provided, names the file specified by \code{output_type}. 
 #' @return Invisibly returns list containing requested data frames (overview and/or highlights).
 #' @examples
 #' d1 <- declare_population(N = 100) +
@@ -30,8 +31,8 @@
 #'
 #'compare_designs(d1, d2, d3)
 #'compare_designs(d1, d2, d3, display = "all")
-#'my_comparison <- compare_designs(d1, d2, d3, Rmd_file_prefix = "my_report")
-#'# above creates Rmd file but does not print to console
+#'my_comparison <- compare_designs(d1, d2, d3, file_prefix = "my_report")
+#'# above creates html file but does not print to console
 #'# (but comparisons can be stored and printed later...)...
 #'my_comparison
 #'
@@ -69,9 +70,14 @@
 #'
 #'@export   
 compare_designs <- function(..., display = c("highlights", "all", "none"),
-                            sort_comparisons = TRUE, Rmd_file_prefix = NULL){
+                            sort_comparisons = TRUE, 
+                            output_type = c("html", "pdf", "word", "Rmd", "none"),
+                            file_prefix = NULL){
   
   display <- match.arg(display, c("highlights", "all", "none"))
+  output_type <- match.arg(output_type, c("html", "pdf", "word", "Rmd", "none"))
+  if(is.null(file_prefix))
+    file_prefix <- "design_comparison"
   
   designs <- list(...)
   if (unlist(unique(lapply(designs, class)))[1] != "design") 
@@ -271,8 +277,7 @@ compare_designs <- function(..., display = c("highlights", "all", "none"),
 #  }}}
   
   class(out) <- "design_comparison"
-  if(display != "none")
-    print(out, display = display, Rmd_file_prefix = Rmd_file_prefix)
+  print(out, display = display, output_type = output_type, file_prefix = file_prefix)
   return(invisible(out))
 }
 
