@@ -4,6 +4,7 @@
 #' @param display c("highlights", "all", "none"), where highlights is the default.
 #' @param output_type c("html", "pdf", "word", "github", "Rmd", "none"). Creates a file called 'design_comparison.html' unless file_prefix is provided (or a different file type is specified). 'Rmd' means write R markdown only (otherwise Rmd is saved along with desired type of output file).
 #' @param file_prefix Optional. If provided, names the file specified by 'output_type.' 
+#' @param render_quietly If FALSE (default), preview pops up and rendering details display to console. 
 #' @method print design_comparison
 #' @importFrom knitr kable
 #' @importFrom rmarkdown render
@@ -11,18 +12,20 @@
 print.design_comparison <- function(design_comparison, 
                                     display = c("highlights", "all", "none"),
                                     output_type = c("html", "pdf", "word", "github", "Rmd", "none"),
-                                    file_prefix = "design_comparison"){
+                                    file_prefix = "design_comparison", 
+                                    render_quietly = FALSE){
   
   print_dc(dc = design_comparison,
            display =  match.arg(display, c("highlights", "all", "none")),
            file_prefix = file_prefix,
-           output_type = match.arg(output_type, c("html", "pdf", "word", "github", "Rmd", "none")))
+           output_type = match.arg(output_type, c("html", "pdf", "word", "github", "Rmd", "none")),
+           render_quietly = render_quietly)
   # to_Rmd deliberately left blank so that print_dc() can call print.design_comparison() recursively properly
 }
 
 # internal version of print.design_copy
 # to_Rmd is just a dummy telling print helper functions to add backticks
-print_dc <- function(dc, display, file_prefix = "design_comparison", output_type = "html", to_Rmd = FALSE){
+print_dc <- function(dc, display, file_prefix = "design_comparison", output_type = "html", to_Rmd = FALSE, render_quietly = FALSE){
   
   if(output_type != "none" && !to_Rmd){
     
@@ -42,10 +45,13 @@ print_dc <- function(dc, display, file_prefix = "design_comparison", output_type
     file_name <- paste0(file_prefix, ".Rmd")
     writeLines(c(header, body), file_name)
     cat("DeclareDesign RMarkdown comparison template created. The file is called ", 
-        file_name, ".", sep="")
+        file_name, ".\n", sep="")
     
-    if(output_type != "Rmd")
-      render(file_name)
+    if(output_type != "Rmd"){
+      render(file_name, quiet = render_quietly)
+      cat(output_type, "document rendered sucessfully.\n")
+    }
+      
     
   }else{
     

@@ -8,7 +8,9 @@
 #' @param display c("highlights", "all", "none"), where highlights is the default. 
 #' @param sort_comparisons Logical: order rows by Jaccard similarity to the first design?
 #' @param output_type c("html", "pdf", "word", "github", "Rmd", "none"). Creates a file called 'design_comparison.html' unless file_prefix is provided (or a different file type is specified).
-#' @param file_prefix Optional. If provided, names the file specified by \code{output_type}. 
+#' @param file_prefix Optional. If provided, names the file specified by \code{output_type}.
+#' @param render_quietly If FALSE (default), preview pops up and rendering details display to console. 
+#' @param seed seed to be used to ensure simulation does not artifically affect results.
 #' @return Invisibly returns list containing requested data frames (overview and/or highlights).
 #' @examples
 #' d1 <- declare_population(N = 100) +
@@ -72,7 +74,7 @@
 compare_designs <- function(..., display = c("highlights", "all", "none"),
                             sort_comparisons = TRUE, 
                             output_type = c("html", "pdf", "word",  "github", "Rmd", "none"),
-                            file_prefix = NULL){
+                            file_prefix = NULL, render_quietly = FALSE, seed = 12345){
   
   display <- match.arg(display, c("highlights", "all", "none"))
   output_type <- match.arg(output_type, c("html", "pdf", "word", "github", "Rmd", "none"))
@@ -187,7 +189,7 @@ compare_designs <- function(..., display = c("highlights", "all", "none"),
   
   summaries <- summary_available <- c()
   for(d in 1:N_designs){
-    set.seed(1) # make a parameter of summary (?)
+    set.seed(seed) # make a parameter of summary (?)
     tmp <- try(s <- summary(designs[[d]]), silent = TRUE)
     summary_available[d] <- if(inherits(tmp, "try-error")) FALSE else TRUE
     summaries[[design_names[d]]] <- tmp 
@@ -226,7 +228,6 @@ compare_designs <- function(..., display = c("highlights", "all", "none"),
       
       tmp <- rbind(reference_code[elements], code_diffs)
       
-      browser()
       colnames(tmp) <- c(design_names[1], design_names[d])
       code_differences[[design_names[d]]] <- tmp
       
@@ -280,7 +281,7 @@ compare_designs <- function(..., display = c("highlights", "all", "none"),
 #  }}}
   
   class(out) <- "design_comparison"
-  print(out, display = display, output_type = output_type, file_prefix = file_prefix)
+  print(out, display = display, output_type = output_type, file_prefix = file_prefix, render_quietly = render_quietly)
   return(invisible(out))
 }
 
