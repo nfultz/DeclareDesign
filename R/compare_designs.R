@@ -83,6 +83,8 @@ compare_designs <- function(..., display = c("highlights", "all", "none"),
   if (unlist(unique(lapply(designs, class)))[1] != "design") 
     stop("All objects must be designs (i.e., DeclareDesign objects).")
   design_names <- as.character(as.list(substitute(list(...)))[-1L])
+  if(length(unique(design_names)) != length(design_names))
+    stop("Please do not include a design more than once.")
   reference_design <- design_names[1]
   N_designs <- length(designs)
   
@@ -185,6 +187,7 @@ compare_designs <- function(..., display = c("highlights", "all", "none"),
   
   summaries <- summary_available <- c()
   for(d in 1:N_designs){
+    set.seed(1) # make a parameter of summary (?)
     tmp <- try(s <- summary(designs[[d]]), silent = TRUE)
     summary_available[d] <- if(inherits(tmp, "try-error")) FALSE else TRUE
     summaries[[design_names[d]]] <- tmp 
