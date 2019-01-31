@@ -4,12 +4,8 @@
 #' (e.g., do not switch between '=' and '<-' for assignment or 
 #' include optional parentheses on some designs but not others). 
 #' 
-#' @param ... A design or set of designs typically created using the + operator, or a \code{data.frame} of simulations, typically created by \code{\link{simulate_design}}. 
-#' @param display c("highlights", "all", "none"), where highlights is the default. 
-#' @param sort_comparisons Logical: order rows by Jaccard similarity to the first design?
-#' @param output_type c("html", "pdf", "word", "github", "Rmd", "none"). Creates a file called 'design_comparison.html' unless file_prefix is provided (or a different file type is specified).
-#' @param file_prefix Optional. If provided, names the file specified by \code{output_type}.
-#' @param render_quietly If FALSE (default), preview pops up and rendering details display to console. 
+#' @param ... A design or set of designs typically created using the + operator, or a \code{data.frame} of simulations, typically created by \code{\link{simulate_design}}.
+#' @param sort_comparisons Logical: order rows by Jaccard similarity to the first design? 
 #' @param seed seed to be used to ensure simulation does not artifically affect results.
 #' @return Invisibly returns list containing requested data frames (overview and/or highlights).
 #' @examples
@@ -71,15 +67,7 @@
 #'
 #'
 #'@export   
-compare_designs <- function(..., display = c("highlights", "all", "none"),
-                            sort_comparisons = TRUE, 
-                            output_type = c("html", "pdf", "word",  "github", "Rmd", "none"),
-                            file_prefix = NULL, render_quietly = FALSE, seed = 12345){
-  
-  display <- match.arg(display, c("highlights", "all", "none"))
-  output_type <- match.arg(output_type, c("html", "pdf", "word", "github", "Rmd", "none"))
-  if(is.null(file_prefix))
-    file_prefix <- "design_comparison"
+compare_designs <- function(..., sort_comparisons = TRUE, seed = 12345){
   
   designs <- list(...)
   if (unlist(unique(lapply(designs, class)))[1] != "design") 
@@ -182,8 +170,9 @@ compare_designs <- function(..., display = c("highlights", "all", "none"),
   rownames(similarity) <- design_names
   
   # Identical Steps
-  identical_steps <- unique(similarity) == 1 
-  
+  identical_steps <- apply(similarity, 2, sd) == 0
+  # unique(similarity) == 1 
+
   identical_attr_to_design1 <- identicals(designs, attributes)
   #identical_attr_to_design1 <- unlist(lapply(designs, identical_attributes, designs[[1]]))
   
@@ -281,7 +270,7 @@ compare_designs <- function(..., display = c("highlights", "all", "none"),
 #  }}}
   
   class(out) <- "design_comparison"
-  print(out, display = display, output_type = output_type, file_prefix = file_prefix, render_quietly = render_quietly)
+#  print(out, display = display, output_type = output_type, file_prefix = file_prefix, render_quietly = render_quietly)
   return(invisible(out))
 }
 

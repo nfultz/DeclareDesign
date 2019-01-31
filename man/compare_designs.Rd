@@ -4,23 +4,12 @@
 \alias{compare_designs}
 \title{compare_designs}
 \usage{
-compare_designs(..., display = c("highlights", "all", "none"),
-  sort_comparisons = TRUE, output_type = c("html", "pdf", "word",
-  "github", "Rmd", "none"), file_prefix = NULL, render_quietly = FALSE,
-  seed = 12345)
+compare_designs(..., sort_comparisons = TRUE, seed = 12345)
 }
 \arguments{
 \item{...}{A design or set of designs typically created using the + operator, or a \code{data.frame} of simulations, typically created by \code{\link{simulate_design}}.}
 
-\item{display}{c("highlights", "all", "none"), where highlights is the default.}
-
 \item{sort_comparisons}{Logical: order rows by Jaccard similarity to the first design?}
-
-\item{output_type}{c("html", "pdf", "word", "github", "Rmd", "none"). Creates a file called 'design_comparison.html' unless file_prefix is provided (or a different file type is specified).}
-
-\item{file_prefix}{Optional. If provided, names the file specified by \code{output_type}.}
-
-\item{render_quietly}{If FALSE (default), preview pops up and rendering details display to console.}
 
 \item{seed}{seed to be used to ensure simulation does not artifically affect results.}
 }
