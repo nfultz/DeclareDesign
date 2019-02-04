@@ -31,18 +31,82 @@ summary.design_comparison <- function(design_comparison){
 #' design_diff
 #' Visualize differences between design_comparison objects or summaries with library(diffobj). Appears in Viewer tab of RStudio.
 #' @param reference The reference object (a.k.a., 'target'). 
-#' @param alternative Another object to compare the referencd to.
+#' @param alternative If provided, another object to compare the referencd to.
+#' @param ... additional arguments to be passed to diffobj::diffPrint().
 #' @importFrom diffobj diffPrint
 #' @export
-design_diff <- function(reference, alternative){
+design_diff <- function(reference, alternative=NULL, ...){
   
   if(!is.null(alternative))
     stopifnot(class(reference) == class(alternative))
   
-  diffPrint(target = reference,
-              current = alternative) 
+  stopifnot(sum(class(reference) %in% c("design_comparison", "summary.design")) > 0)
   
+  dots <- list(...)
+  
+  
+  if(is.null(alternative)){
+    
+    if(class(reference) == "design_comparison"){
+      
+      r <- reference
+      target_rows <- rownames(r$data_shape) == r$reference_design
+
+      reference_design <- r$data_shape[target_rows,]
+      alternative_design <- r$data_shape[-target_rows,]
+      
+      diff_print(reference_design, alternative_design, dots)
+      
+      reference_design <- r$data_shape[target_rows,]
+      alternative_design <- r$data_shape[-target_rows,]
+      
+      diff_print(reference_design, alternative_design, dots)
+      
+      reference_design <- r$data_shape[target_rows,]
+      alternative_design <- r$data_shape[-target_rows,]
+      
+      diff_print(reference_design, alternative_design, dots)
+      
+      reference_design <- r$data_shape[target_rows,]
+      alternative_design <- r$data_shape[-target_rows,]
+      
+      diff_print(reference_design, alternative_design, dots)
+      
+      reference_design <- r$character_comparisons[target_rows,]
+      alternative_design <- r$character_comparisons[-target_rows,]
+      
+      diff_print(reference_design, alternative_design, dots)
+      
+      reference_design <- r$overview_nchar[target_rows,]
+      alternative_design <-  r$overview_nchar[-target_rows,]
+      
+      diff_print(reference_design, alternative_design, dots)
+      
+      reference_design <- r$similarity[target_rows,]
+      alternative_design <- r$similarity[-target_rows,]
+      
+      diff_print(reference_design, alternative_design, dots)
+      
+    }else{
+      stop("Visualization not implemented for single design summaries.")
+    }
+    
+  }else{
+    diff_print(reference, alternative, dots)
+    
+  }
+
 }
+diff_print <- function(reference, alternative, dots){
+  if(length(dots)){
+    diffPrint(target = reference,
+              current = alternative, ...) 
+  }else{
+    diffPrint(target = reference,
+              current = alternative) 
+  }
+}
+
 
 #' save_design_comparison
 #' Save function for design comparison. Renders a document (e.g., pdf).

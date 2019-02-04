@@ -5,12 +5,14 @@
 \title{design_diff
 Visualize differences between design_comparison objects or summaries with library(diffobj). Appears in Viewer tab of RStudio.}
 \usage{
-design_diff(reference, alternative)
+design_diff(reference, alternative = NULL, ...)
 }
 \arguments{
 \item{reference}{The reference object (a.k.a., 'target').}
 
-\item{alternative}{Another object to compare the referencd to.}
+\item{alternative}{If provided, another object to compare the referencd to.}
+
+\item{...}{additional arguments to be passed to diffobj::diffPrint().}
 }
 \description{
 design_diff
