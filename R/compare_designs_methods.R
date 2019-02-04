@@ -42,9 +42,6 @@ design_diff <- function(reference, alternative=NULL, ...){
   
   stopifnot(sum(class(reference) %in% c("design_comparison", "summary.design")) > 0)
   
-  dots <- list(...)
-  
-  
   if(is.null(alternative)){
     
     if(class(reference) == "design_comparison"){
@@ -54,53 +51,59 @@ design_diff <- function(reference, alternative=NULL, ...){
 
       reference_design <- r$data_shape[target_rows,]
       alternative_design <- r$data_shape[-target_rows,]
-      
-      diff_print(reference_design, alternative_design, dots)
-      
-      reference_design <- r$data_shape[target_rows,]
-      alternative_design <- r$data_shape[-target_rows,]
-      
-      diff_print(reference_design, alternative_design, dots)
+      cat("Visualizing differences in terms of data_shape...\n")
+      diff_print(reference_design, alternative_design, ...)
+      continue <- tolower(readline(prompt = "Continue to next diff? (y/n)"))
+      if(continue == "n")
+        stop("User closed function.")
       
       reference_design <- r$data_shape[target_rows,]
       alternative_design <- r$data_shape[-target_rows,]
       
-      diff_print(reference_design, alternative_design, dots)
+      diff_print(reference_design, alternative_design, ...)
       
       reference_design <- r$data_shape[target_rows,]
       alternative_design <- r$data_shape[-target_rows,]
       
-      diff_print(reference_design, alternative_design, dots)
+      diff_print(reference_design, alternative_design, ...)
+      
+      reference_design <- r$data_shape[target_rows,]
+      alternative_design <- r$data_shape[-target_rows,]
+      
+      diff_print(reference_design, alternative_design, ...)
       
       reference_design <- r$character_comparisons[target_rows,]
       alternative_design <- r$character_comparisons[-target_rows,]
       
-      diff_print(reference_design, alternative_design, dots)
+      diff_print(reference_design, alternative_design, ...)
       
       reference_design <- r$overview_nchar[target_rows,]
       alternative_design <-  r$overview_nchar[-target_rows,]
       
-      diff_print(reference_design, alternative_design, dots)
+      diff_print(reference_design, alternative_design, ...)
       
       reference_design <- r$similarity[target_rows,]
       alternative_design <- r$similarity[-target_rows,]
       
-      diff_print(reference_design, alternative_design, dots)
+      diff_print(reference_design, alternative_design, ...)
       
     }else{
       stop("Visualization not implemented for single design summaries.")
     }
     
   }else{
-    diff_print(reference, alternative, dots)
+    diff_print(reference, alternative, ...)
     
   }
 
 }
-diff_print <- function(reference, alternative, dots){
+diff_print <- function(reference, alternative, ...){
+  
+  dots <- list(...)
   if(length(dots)){
     diffPrint(target = reference,
-              current = alternative, ...) 
+              current = alternative, 
+              ...) 
   }else{
     diffPrint(target = reference,
               current = alternative) 
